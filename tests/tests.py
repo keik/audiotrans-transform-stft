@@ -41,3 +41,17 @@ def test_int_array_should_transform_to_matrix_formed_properly_shape():
     data = np.arange(2048)
     transformed = tr.transform(data)
     assert transformed.shape == (513, 5)
+
+
+def test_repeatedly_transform_should_be_connected_smoothly():
+    sys.argv[1:] = '-w 1024 -H 256'.split()
+
+    # 0 element array to 0 row matrix (= 0 / 1024)
+    tr = STFTTransform()
+    all_data = np.arange(4096)
+
+    for s, col in zip(range(0, 4096, 1024),
+                      [1, 4, 4, 4]):
+        data = all_data[s:s + 1024]
+        transformed = tr.transform(data)
+        assert transformed.shape == (513, col)

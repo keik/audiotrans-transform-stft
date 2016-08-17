@@ -54,8 +54,8 @@ class STFTTransform(Transform):
 
         for i in range(0, cols):
             d[:, i] = np.fft.fft(
-                np.hamming(self.window_size) * wave[i * self.hop_size:
-                                                    i * self.hop_size + self.window_size]
+                np.hamming(self.window_size) * merged_wave[i * self.hop_size:
+                                                           i * self.hop_size + self.window_size]
             )[0:self.window_size // 2 + 1]
 
         self.prev_wave = wave[-self.window_size + self.hop_size:]
