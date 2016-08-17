@@ -16,7 +16,10 @@ class STFTTransform(Transform):
     def __init__(self, argv=[]):
         parser = ArgumentParser(
             prog=__package__,
-            description="""Transform module for Short-Time Fourier Transformation (STFT)""",
+            description="""Transform module for Short-Time Fourier Transformation (STFT)
+
+Transform wave array as np.ndarray shaped (1,) to STFT matrix as
+np.ndarray shaped (1 + widnow_size/2, (len(wave) - window_size) / hop-size + 1).""",
             formatter_class=RawTextHelpFormatter)
 
         parser.add_argument('-v', '--verbose', dest='verbose',
@@ -28,7 +31,7 @@ class STFTTransform(Transform):
 
         parser.add_argument('-H', '--hop-size', dest='hop_size', default='256',
                             action='store_true',
-                            help='Run as verbose mode')
+                            help='Hop size to FFT. Default is 256')
 
         args = parser.parse_args(argv)
 
@@ -49,8 +52,7 @@ class STFTTransform(Transform):
         rows = self.window_size // 2 + 1
         cols = max(int((dlen - self.window_size) / self.hop_size + 1), 0)
 
-        d = np.empty((rows, cols),
-                     dtype=np.complex64)
+        d = np.empty((rows, cols), dtype=np.complex64)
 
         for i in range(0, cols):
             d[:, i] = np.fft.fft(
@@ -59,5 +61,5 @@ class STFTTransform(Transform):
             )[0:self.window_size // 2 + 1]
 
         self.prev_wave = wave[-self.window_size + self.hop_size:]
-
+        logger.info('STFT from {} form wave to {} form matrix'.format(merged_wave.shape, d.shape))
         return d
