@@ -23,14 +23,41 @@ class STFTTransform(Transform):
                             action='store_true',
                             help='Run as verbose mode')
 
+        parser.add_argument('-w', '--window-size', dest='window_size', default='1024',
+                            help='Window size to FFT. Default is 1024')
+
+        parser.add_argument('-H', '--hop-size', dest='hop_size', default='256',
+                            action='store_true',
+                            help='Run as verbose mode')
+
         args = parser.parse_args(argv)
 
         if args.verbose:
             logger.setLevel(DEBUG)
             logger.info('Start as verbose mode')
 
-    def transform(self, data):
-        # ndata = np.fft.fft(data)
-        # logger.info('STFT from {} form to {} form'.format(data.shape, ndata.shape))
-        # return ndata
-        pass
+        self.window_size = int(args.window_size)
+        self.hop_size = int(args.hop_size)
+        self.prev_wave = np.empty(0)
+
+    def transform(self, wave):
+
+        # merge prev wave and current wave to connect STFT matrix smoothly
+        merged_wave = np.append(self.prev_wave, wave)
+
+        dlen = len(merged_wave)
+        rows = self.window_size // 2 + 1
+        cols = max(int((dlen - self.window_size) / self.hop_size + 1), 0)
+
+        d = np.empty((rows, cols),
+                     dtype=np.complex64)
+
+        for i in range(0, cols):
+            d[:, i] = np.fft.fft(
+                np.hamming(self.window_size) * wave[i * self.hop_size:
+                                                    i * self.hop_size + self.window_size]
+            )[0:self.window_size // 2 + 1]
+
+        self.prev_wave = wave[-self.window_size + self.hop_size:]
+
+        return d
