@@ -5,7 +5,7 @@ DEV_DEPS="requirements-dev.txt"
 test: init
 	@echo $(TAG)$@$(END)
 	flake8
-	py.test tests --cov audiotrans_transform_stft --verbose
+	py.test tests/tests.py --cov audiotrans_transform_stft --verbose
 
 test-all: uninstall-all test
 	@echo
