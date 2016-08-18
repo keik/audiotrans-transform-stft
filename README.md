@@ -39,7 +39,8 @@ optional arguments:
   -v, --verbose         Run as verbose mode
   -w WINDOW_SIZE, --window-size WINDOW_SIZE
                         Window size to FFT. Default is 1024
-  -H, --hop-size        Hop size to FFT. Default is 256
+  -H HOP_SIZE, --hop-size HOP_SIZE
+                        Hop size to FFT. Default is 256
 ```
 
 

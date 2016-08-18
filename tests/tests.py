@@ -9,8 +9,28 @@ def test_accept_arg_of_verbose():
     STFTTransform(['-v'])  # no error would be raised
 
 
+def test_accept_args_of_window_and_hop_sizes():
+
+    # 2048 element array to 5 row matrix (= 1024 / 1024 + 1024 / 256)
+    tr = STFTTransform('-w 1024 -H 256'.split())
+    data = np.arange(2048)
+    transformed = tr.transform(data)
+    assert transformed.shape == (513, 5)
+
+    # 2048 element array to 7 row matrix (= 512 / 512 + 1536 / 256)
+    tr = STFTTransform('-w 512 -H 256'.split())
+    data = np.arange(2048)
+    transformed = tr.transform(data)
+    assert transformed.shape == (257, 7)
+
+    # 2048 element array to 13 row matrix (= 512 / 512 + 1536 / 128)
+    tr = STFTTransform('-w 512 -H 128'.split())
+    data = np.arange(2048)
+    transformed = tr.transform(data)
+    assert transformed.shape == (257, 13)
+
+
 def test_int_array_should_transform_to_matrix_formed_properly_shape():
-    sys.argv[1:] = '-w 1024 -H 256'.split()
 
     # 0 element array to 0 row matrix (= 0 / 1024)
     tr = STFTTransform()
@@ -44,7 +64,6 @@ def test_int_array_should_transform_to_matrix_formed_properly_shape():
 
 
 def test_repeatedly_transform_should_be_connected_smoothly():
-    sys.argv[1:] = '-w 1024 -H 256'.split()
 
     # 0 element array to 0 row matrix (= 0 / 1024)
     tr = STFTTransform()

@@ -30,7 +30,6 @@ np.ndarray shaped (1 + widnow_size/2, (len(wave) - window_size) / hop-size + 1).
                             help='Window size to FFT. Default is 1024')
 
         parser.add_argument('-H', '--hop-size', dest='hop_size', default='256',
-                            action='store_true',
                             help='Hop size to FFT. Default is 256')
 
         args = parser.parse_args(argv)
