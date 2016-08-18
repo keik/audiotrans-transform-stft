@@ -15,8 +15,8 @@ class STFTTransform(Transform):
 
     def __init__(self, argv=[]):
         parser = ArgumentParser(
-            prog=__package__,
-            description="""Transform module for Short-Time Fourier Transformation (STFT)
+            prog='stft',
+            description="""audiotrans transform module for Short-Time Fourier Transformation (STFT)
 
 Transform wave array as np.ndarray shaped (1,) to STFT matrix as
 np.ndarray shaped (1 + widnow_size/2, (len(wave) - window_size) / hop-size + 1).""",
