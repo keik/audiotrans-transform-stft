@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import numpy as np
 from audiotrans_transform_stft import STFTTransform
 
