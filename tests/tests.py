@@ -64,12 +64,23 @@ def test_int_array_should_transform_to_matrix_formed_properly_shape():
 
 def test_repeatedly_transform_should_be_connected_smoothly():
 
-    # 0 element array to 0 row matrix (= 0 / 1024)
     tr = STFTTransform()
     all_data = np.arange(4096)
-
-    for s, col in zip(range(0, 4096, 1024),
-                      [1, 4, 4, 4]):
+    for s, col in zip(range(0, 4096, 1024), [1, 4, 4, 4]):
         data = all_data[s:s + 1024]
         transformed = tr.transform(data)
         assert transformed.shape == (513, col)
+
+    tr = STFTTransform('-w 512 -H 256'.split())
+    all_data = np.arange(4096)
+    for s, col in zip(range(0, 4096, 1024), [3, 4, 4, 4]):
+        data = all_data[s:s + 1024]
+        transformed = tr.transform(data)
+        assert transformed.shape == (257, col)
+
+    tr = STFTTransform('-w 512 -H 128'.split())
+    all_data = np.arange(4096)
+    for s, col in zip(range(0, 4096, 1024), [5, 8, 8, 8]):
+        data = all_data[s:s + 1024]
+        transformed = tr.transform(data)
+        assert transformed.shape == (257, col)
