@@ -50,13 +50,13 @@ np.ndarray shaped (1 + widnow_size/2, (len(wave) - window_size) / hop-size + 1).
         dlen = len(merged_wave)
         rows = self.window_size // 2 + 1
         cols = max(int((dlen - self.window_size) / self.hop_size + 1), 0)
+        win = np.hamming(self.window_size)
 
         d = np.empty((rows, cols), dtype=np.complex64)
 
         for i in range(0, cols):
             d[:, i] = np.fft.fft(
-                np.hamming(self.window_size) * merged_wave[i * self.hop_size:
-                                                           i * self.hop_size + self.window_size]
+                win * merged_wave[i * self.hop_size:i * self.hop_size + self.window_size]
             )[0:self.window_size // 2 + 1]
 
         self.prev_wave = wave[-self.window_size + self.hop_size:]
