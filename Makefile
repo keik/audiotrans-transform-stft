@@ -1,11 +1,12 @@
 TAG="\n\n\033[0;32m\#\#\# "
 END=" \#\#\# \033[0m\n"
+SELF="audiotrans_transform_stft"
 DEV_DEPS="requirements-dev.txt"
 
 test: init
 	@echo $(TAG)$@$(END)
 	flake8
-	py.test tests/tests.py --cov audiotrans_transform_stft --verbose
+	py.test tests/tests.py --cov $(SELF) --verbose
 
 test-all: uninstall-all test
 	@echo
@@ -21,4 +22,4 @@ uninstall-all: uninstall-self
 
 uninstall-self:
 	@echo $(TAG)$@$(END)
-	- pip uninstall --yes audiotrans_transform_stft 2>/dev/null
+	- pip uninstall --yes $(SELF) 2>/dev/null
