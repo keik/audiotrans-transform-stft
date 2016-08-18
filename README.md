@@ -41,3 +41,15 @@ optional arguments:
                         Window size to FFT. Default is 1024
   -H, --hop-size        Hop size to FFT. Default is 256
 ```
+
+
+## Test
+
+```
+make test
+```
+
+
+## License
+
+MIT (c) keik
