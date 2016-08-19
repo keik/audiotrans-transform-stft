@@ -54,11 +54,11 @@ np.ndarray shaped (1 + widnow_size/2, (len(wave) - window_size) / hop-size + 1).
 
         d = np.empty((rows, cols), dtype=np.complex64)
 
-        for i in range(0, cols):
-            d[:, i] = np.fft.fft(
-                win * merged_wave[i * self.hop_size:i * self.hop_size + self.window_size]
-            )[0:self.window_size // 2 + 1]
+        s = 0
+        for col in range(cols):
+            s = col * self.hop_size
+            d[:, col] = np.fft.fft(win * merged_wave[s:s + self.window_size])[0:rows]
 
-        self.prev_wave = wave[-self.window_size + self.hop_size:]
+        self.prev_wave = merged_wave[-(len(merged_wave) - (s + self.hop_size)):]
         logger.info('STFT from {} form wave to {} form matrix'.format(merged_wave.shape, d.shape))
         return d

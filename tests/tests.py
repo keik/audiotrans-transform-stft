@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pytest
+import wave
 import numpy as np
 from audiotrans_transform_stft import STFTTransform
 
@@ -62,25 +64,24 @@ def test_int_array_should_transform_to_matrix_formed_properly_shape():
     assert transformed.shape == (513, 5)
 
 
-def test_repeatedly_transform_should_be_connected_smoothly():
+@pytest.mark.parametrize('buf_size, win_size, hop_size', [(1024, 1024, 256),
+                                                          (160, 100, 30)])
+def test_repeatedly_transform_should_be_connected_smoothly(buf_size, win_size, hop_size):
 
-    tr = STFTTransform()
-    all_data = np.arange(4096)
-    for s, col in zip(range(0, 4096, 1024), [1, 4, 4, 4]):
-        data = all_data[s:s + 1024]
-        transformed = tr.transform(data)
-        assert transformed.shape == (513, col)
+    tr = STFTTransform('-w {} -H {}'.format(win_size, hop_size).split())
+    wf = wave.open('tests/fixture/drums+bass.wav')
+    all_data = np.fromstring(wf.readframes(wf.getnframes()), np.int16)
+    d = stft(all_data, win_size, hop_size)
+    transformed = np.reshape([], (win_size // 2 + 1, -1))
+    for idx, s in enumerate(range(0, len(all_data), buf_size)):
+        tmp = tr.transform(all_data[s:s + buf_size])
+        transformed = np.concatenate((transformed, tmp), 1)
+    for i in range(transformed.shape[1]):
+        assert (transformed[:, i] == d[:, i]).all()
 
-    tr = STFTTransform('-w 512 -H 256'.split())
-    all_data = np.arange(4096)
-    for s, col in zip(range(0, 4096, 1024), [3, 4, 4, 4]):
-        data = all_data[s:s + 1024]
-        transformed = tr.transform(data)
-        assert transformed.shape == (257, col)
 
-    tr = STFTTransform('-w 512 -H 128'.split())
-    all_data = np.arange(4096)
-    for s, col in zip(range(0, 4096, 1024), [5, 8, 8, 8]):
-        data = all_data[s:s + 1024]
-        transformed = tr.transform(data)
-        assert transformed.shape == (257, col)
+def stft(x, window_size, hop_size):
+    win = np.hamming(window_size)
+    return np.array([np.fft.fft(win * x[i:i + window_size])
+                     for i in range(0, len(x) - window_size, hop_size)],
+                    dtype=np.complex64).T[0:window_size // 2 + 1]
